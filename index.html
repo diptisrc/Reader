@@ -4,10 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Text Reader</title>
+    <title>Text Reader</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Lato:wght@400;700&family=Lora:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,300;0,400;1,300&family=Nunito:wght@400;600&family=Open+Sans:wght@400;600&family=Roboto:wght@400;500&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Default theme (Light) */
             --bg-color: #f8f5f1;
             --text-color: #333;
             --sidebar-bg: #f3f3f3;
@@ -20,7 +22,6 @@
             --title-color: #333;
             --input-border: #ddd;
             --input-bg: #fff;
-
             --separator: #ddd;
             --sidebar-header: #555;
             --control-text: #444;
@@ -40,7 +41,6 @@
             color: var(--text-color);
             transition: all 0.3s ease;
             margin-left: 320px;
-            /* Sidebar width */
             height: 100vh;
             overflow-x: hidden;
         }
@@ -128,16 +128,10 @@
             color: var(--title-color);
         }
 
-        .no-title+#title {
+     
+        #reader-container.no-title #title {
             display: none;
         }
-
-        .no-title~#title,
-        .no-title #title {
-            display: none;
-        }
-
-
 
         #content {
             white-space: pre-wrap;
@@ -200,6 +194,11 @@
             background-color: var(--btn-hover);
         }
 
+        button.active {
+            outline: 2px solid var(--btn-text);
+            outline-offset: -3px;
+        }
+
         textarea {
             width: 100%;
             height: 200px;
@@ -226,7 +225,6 @@
             text-align: center;
         }
 
-
         .hidden {
             display: none;
         }
@@ -250,10 +248,7 @@
             font-size: 0.9em;
         }
 
-        /* Special themes */
-
-        /* Dark Theme */
-        body.dark-mode {
+        body.dark-theme {
             --bg-color: #121212;
             --text-color: #eee;
             --sidebar-bg: #1e1e1e;
@@ -266,15 +261,13 @@
             --title-color: #eee;
             --input-border: #444;
             --input-bg: #333;
-
             --separator: #444;
             --sidebar-header: #bbb;
             --control-text: #ccc;
             --hr-color: #444;
         }
 
-        /* Sepia Theme */
-        body.sepia-mode {
+        body.sepia-theme {
             --bg-color: #f4ecd8;
             --text-color: #5b4636;
             --sidebar-bg: #efe3c3;
@@ -287,15 +280,13 @@
             --title-color: #5b4636;
             --input-border: #d0c6a9;
             --input-bg: #fbf0d9;
-
             --separator: #d0c6a9;
             --sidebar-header: #6b553e;
             --control-text: #6b553e;
             --hr-color: #d0c6a9;
         }
 
-        /* Retro Theme */
-        body.retro-mode {
+        body.retro-theme {
             --bg-color: #233142;
             --text-color: #e3e3e3;
             --sidebar-bg: #455d7a;
@@ -308,7 +299,6 @@
             --title-color: #f8d568;
             --input-border: #566d8a;
             --input-bg: #455d7a;
-
             --separator: #566d8a;
             --sidebar-header: #f7f7f7;
             --control-text: #f7f7f7;
@@ -316,15 +306,7 @@
             font-family: 'Courier New', monospace;
         }
 
-        #load-text,
-        #clear-text {
-            display: inline-block;
-            margin-right: 10px;
-            margin-bottom: 10px;
-        }
-
-        /* Old School Terminal */
-        body.terminal-mode {
+        body.terminal-theme {
             --bg-color: #000000;
             --text-color: #33ff33;
             --sidebar-bg: #111111;
@@ -337,7 +319,6 @@
             --title-color: #33ff33;
             --input-border: #33ff33;
             --input-bg: #000000;
-
             --separator: #33ff33;
             --sidebar-header: #33ff33;
             --control-text: #33ff33;
@@ -345,8 +326,7 @@
             font-family: 'Courier New', monospace;
         }
 
-        /* Punk Theme */
-        body.punk-mode {
+        body.punk-theme {
             --bg-color: #111;
             --text-color: #ff00de;
             --sidebar-bg: #222;
@@ -359,15 +339,13 @@
             --title-color: #00eeff;
             --input-border: #ff00de;
             --input-bg: #333;
-
             --separator: #ff00de;
             --sidebar-header: #00eeff;
             --control-text: #00eeff;
             --hr-color: #ff00de;
         }
 
-        /* Modern Clean */
-        body.modern-mode {
+        body.themern-theme {
             --bg-color: #fafafa;
             --text-color: #333;
             --sidebar-bg: #f0f0f0;
@@ -380,7 +358,6 @@
             --title-color: #007bff;
             --input-border: #ced4da;
             --input-bg: #fff;
-
             --separator: #e9ecef;
             --sidebar-header: #343a40;
             --control-text: #495057;
@@ -388,8 +365,7 @@
             font-family: 'Segoe UI', 'Roboto', sans-serif;
         }
 
-        /* Paper Theme */
-        body.paper-mode {
+        body.paper-theme {
             --bg-color: #fffff8;
             --text-color: #222;
             --sidebar-bg: #f5f5f0;
@@ -402,15 +378,13 @@
             --title-color: #333;
             --input-border: #ccc;
             --input-bg: #fffff8;
-
             --separator: #ddd;
             --sidebar-header: #555;
             --control-text: #555;
             --hr-color: #ddd;
         }
 
-        /* Night Owl */
-        body.night-owl-mode {
+        body.night-owl-theme {
             --bg-color: #011627;
             --text-color: #d6deeb;
             --sidebar-bg: #01111d;
@@ -423,7 +397,6 @@
             --title-color: #82aaff;
             --input-border: #1d3b53;
             --input-bg: #0b253a;
-
             --separator: #1d3b53;
             --sidebar-header: #82aaff;
             --control-text: #c792ea;
@@ -480,11 +453,11 @@
 <body>
     <div class="sidebar">
         <div class="sidebar-header">
-            <h2>Enhanced Text Reader</h2>
+            <h2>Text Reader/Pretty text</h2>
         </div>
 
         <div class="control-section">
-            <h3>📄 Text Input</h3>
+            <h3>Text Input</h3>
             <div class="control-group">
                 <label for="text-input">Paste your text (first line = title):</label>
                 <textarea id="text-input" placeholder="Paste your text here..."></textarea>
@@ -498,37 +471,53 @@
         <hr>
 
         <div class="control-section">
-            <h3>🎨 Theme Selection</h3>
+            <h3>Theme Selection</h3>
             <div class="theme-btns">
-                <button class="preset-btn" id="light-mode">Light</button>
-                <button class="preset-btn" id="dark-mode">Dark</button>
-                <button class="preset-btn" id="sepia-mode">Sepia</button>
-                <button class="preset-btn" id="retro-mode">Retro</button>
-                <button class="preset-btn" id="terminal-mode">Terminal</button>
-                <button class="preset-btn" id="punk-mode">Punk</button>
-                <button class="preset-btn" id="modern-mode">Modern</button>
-                <button class="preset-btn" id="paper-mode">Paper</button>
-                <button class="preset-btn" id="night-owl-mode">Night Owl</button>
+                <button class="preset-btn" id="light-theme">Light</button>
+                <button class="preset-btn" id="dark-theme">Dark</button>
+                <button class="preset-btn" id="sepia-theme">Sepia</button>
+                <button class="preset-btn" id="retro-theme">Retro</button>
+                <button class="preset-btn" id="terminal-theme">Terminal</button>
+                <button class="preset-btn" id="punk-theme">Punk</button>
+                <button class="preset-btn" id="themern-theme">themern</button>
+                <button class="preset-btn" id="paper-theme">Paper</button>
+                <button class="preset-btn" id="night-owl-theme">Night Owl</button>
             </div>
         </div>
 
         <hr>
 
         <div class="control-section">
-            <h3>🔤 Typography</h3>
+            <h3>Typography</h3>
             <div class="control-group">
                 <label for="font-family">Font:</label>
                 <select id="font-family">
-                    <option value="Arial, sans-serif">Arial</option>
-                    <option value="Georgia, serif">Georgia</option>
-                    <option value="'Times New Roman', serif">Times New Roman</option>
-                    <option value="'Segoe UI', sans-serif">Segoe UI</option>
-                    <option value="'Courier New', monospace">Courier New</option>
-                    <option value="'Palatino Linotype', serif">Palatino</option>
-                    <option value="Verdana, sans-serif">Verdana</option>
-                    <option value="'Comic Sans MS', cursive">Comic Sans</option>
-                    <option value="'Lucida Console', monospace">Lucida Console</option>
-                    <option value="'Bookman Old Style', serif">Bookman</option>
+                    <optgroup label="High Legibility — Sans Serif">
+                        <option value="'Inter', sans-serif">Inter</option>
+                        <option value="'Open Sans', sans-serif">Open Sans</option>
+                        <option value="'Roboto', sans-serif">Roboto</option>
+                        <option value="'Lato', sans-serif">Lato</option>
+                        <option value="'Nunito', sans-serif">Nunito</option>
+                        <option value="Verdana, sans-serif">Verdana</option>
+                        <option value="'Segoe UI', sans-serif">Segoe UI</option>
+                        <option value="Arial, sans-serif">Arial</option>
+                    </optgroup>
+                    <optgroup label="High Legibility — Serif">
+                        <option value="'Lora', serif">Lora</option>
+                        <option value="'Merriweather', serif">Merriweather</option>
+                        <option value="'Source Serif 4', serif">Source Serif 4</option>
+                        <option value="Georgia, serif">Georgia</option>
+                        <option value="'Palatino Linotype', serif">Palatino</option>
+                    </optgroup>
+                    <optgroup label="Monospace">
+                        <option value="'Courier New', monospace">Courier New</option>
+                        <option value="'Lucida Console', monospace">Lucida Console</option>
+                    </optgroup>
+                    <optgroup label="Other">
+                        <option value="'Times New Roman', serif">Times New Roman</option>
+                        <option value="'Comic Sans MS', cursive">Comic Sans</option>
+                        <option value="'Bookman Old Style', serif">Bookman</option>
+                    </optgroup>
                 </select>
             </div>
             <div class="control-group">
@@ -537,10 +526,9 @@
                 <button id="no-title">No Title</button>
             </div>
 
-
             <div class="control-group">
-                <label for="font-size">Font Size: <span id="font-size-value">18</span>px</label>
-                <input type="range" id="font-size" min="12" max="32" value="18">
+                <label for="font-size">Font Size: <span id="font-size-value">24</span>px</label>
+                <input type="range" id="font-size" min="12" max="32" value="24">
             </div>
 
             <div class="control-group">
@@ -557,7 +545,7 @@
         <hr>
 
         <div class="control-section">
-            <h3>📐 Layout Options</h3>
+            <h3>Layout Options</h3>
             <div class="control-group">
                 <label for="reading-width">Reading Width: <span id="width-value">800</span>px</label>
                 <input type="range" id="reading-width" min="400" max="1500" step="50" value="800">
@@ -577,7 +565,7 @@
         <hr>
 
         <div class="control-section">
-            <h3>✨ Enhanced Features</h3>
+            <h3>Features</h3>
 
             <div class="control-group">
                 <label>Reading Guide:</label>
@@ -608,7 +596,7 @@
         <hr>
 
         <div class="control-section">
-            <h3>🗂️ Storage</h3>
+            <h3>Storage</h3>
             <div class="control-group">
                 <button id="save-preset">Save Current Settings As Preset</button>
                 <button id="save-text">Download Text</button>
@@ -617,22 +605,18 @@
         </div>
     </div>
 
-    <button class="sidebar-toggle">☰</button>
+    <button class="sidebar-toggle">&#9776;</button>
 
     <div class="main-content">
         <div id="reader-container" class="hidden">
             <div id="title"></div>
             <div id="content"></div>
-
         </div>
     </div>
 
     <div id="reading-line" class="line-indicator hidden"></div>
 
     <script>
-
-
-
         const sidebar = document.querySelector('.sidebar');
         const sidebarToggle = document.querySelector('.sidebar-toggle');
         const textInput = document.getElementById('text-input');
@@ -640,11 +624,8 @@
         const titleElement = document.getElementById('title');
         const contentElement = document.getElementById('content');
         const readerContainer = document.getElementById('reader-container');
-
-        const readingTimeElement = document.getElementById('reading-time');
         const mainContent = document.querySelector('.main-content');
 
-        // UI controls
         const fontFamily = document.getElementById('font-family');
         const fontSize = document.getElementById('font-size');
         const fontSizeValue = document.getElementById('font-size-value');
@@ -658,18 +639,6 @@
         const letterSpacing = document.getElementById('letter-spacing');
         const letterSpacingValue = document.getElementById('letter-spacing-value');
 
-        // Theme buttons
-        const lightMode = document.getElementById('light-mode');
-        const darkMode = document.getElementById('dark-mode');
-        const sepiaMode = document.getElementById('sepia-mode');
-        const retroMode = document.getElementById('retro-mode');
-        const terminalMode = document.getElementById('terminal-mode');
-        const punkMode = document.getElementById('punk-mode');
-        const modernMode = document.getElementById('modern-mode');
-        const paperMode = document.getElementById('paper-mode');
-        const nightOwlMode = document.getElementById('night-owl-mode');
-
-        // Enhanced features
         const toggleReadingLine = document.getElementById('toggle-reading-line');
         const readingLine = document.getElementById('reading-line');
         const pageAnimation = document.getElementById('page-animation');
@@ -680,24 +649,62 @@
         const savePreset = document.getElementById('save-preset');
         const saveTextButton = document.getElementById('save-text');
         const clearStorageButton = document.getElementById('clear-storage');
+        const noTitleBtn = document.getElementById('no-title');
+        const toggleNotebookLines = document.getElementById('toggle-notebook-lines');
 
-        // Sidebar toggle
+        function setNoTitle(active) {
+            if (active) {
+                readerContainer.classList.add('no-title');
+                noTitleBtn.classList.add('active');
+            } else {
+                readerContainer.classList.remove('no-title');
+                noTitleBtn.classList.remove('active');
+            }
+            localStorage.setItem('noTitletheme', active);
+        }
+
+        noTitleBtn.addEventListener('click', () => {
+            const isActive = readerContainer.classList.contains('no-title');
+            setNoTitle(!isActive);
+            if (!readerContainer.classList.contains('hidden')) {
+                loadText();
+            }
+        });
+
+        function loadText() {
+            const text = textInput.value.trim();
+            if (!text) return;
+
+            const noTitleActive = readerContainer.classList.contains('no-title');
+
+            if (noTitleActive) {
+                titleElement.textContent = '';
+                contentElement.innerHTML = text.replace(/\n/g, '<br>');
+            } else {
+                const lines = text.split('\n');
+                titleElement.textContent = lines[0];
+                contentElement.innerHTML = lines.slice(1).join('\n').replace(/\n/g, '<br>');
+            }
+
+            contentElement.style.whiteSpace = 'pre-line';
+            readerContainer.classList.remove('hidden');
+
+            localStorage.setItem('savedText', text);
+            window.scrollTo(0, readerContainer.offsetTop);
+            applyPageAnimation();
+        }
+
+        loadButton.addEventListener('click', loadText);
+
         sidebarToggle.addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
             sidebarToggle.classList.toggle('collapsed');
             document.body.classList.toggle('sidebar-closed');
-
-            // Store sidebar state
             localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
         });
 
-
-
-
-        // Page animation function
         function applyPageAnimation() {
             const animation = pageAnimation.value;
-
             switch (animation) {
                 case 'fade':
                     readerContainer.style.animation = 'fadeIn 1s ease-in-out';
@@ -712,138 +719,99 @@
                     readerContainer.style.animation = 'none';
             }
         }
-        const filterEmojisButton = document.getElementById('filter-emojis');
 
-        filterEmojisButton.addEventListener('click', () => {
-            // This regex pattern matches emoji characters
-            // It targets the Unicode ranges that contain emoji characters
-            const emojiRegex = /[\u{1F000}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F1E6}-\u{1F1FF}\u{1F300}-\u{1F5FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}]/gu;
-
-            // Get the current text
-            const currentText = textInput.value;
-
-            // Remove emojis
-            const filteredText = currentText.replace(emojiRegex, '');
-
-            // Update the text input
-            textInput.value = filteredText;
-
-            // Visual feedback
-            filterEmojisButton.textContent = "Emojis Removed!";
-            setTimeout(() => {
-                filterEmojisButton.textContent = "Filter Emojis";
-            }, 1000);
+        document.getElementById('filter-emojis').addEventListener('click', () => {
+            const emojiRegex = /[\u{1F000}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F1E6}-\u{1F1FF}\u{1F300}-\u{1F5FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}]/gu;
+            const btn = document.getElementById('filter-emojis');
+            textInput.value = textInput.value.replace(emojiRegex, '');
+            btn.textContent = 'Emojis Removed!';
+            setTimeout(() => { btn.textContent = 'Filter Emojis'; }, 1000);
         });
-        // Font family change
+
         fontFamily.addEventListener('change', () => {
             contentElement.style.fontFamily = fontFamily.value;
             titleElement.style.fontFamily = fontFamily.value;
             localStorage.setItem('fontFamily', fontFamily.value);
         });
 
-        // Font size change
         fontSize.addEventListener('input', () => {
-            const size = fontSize.value;
-            fontSizeValue.textContent = size;
-            contentElement.style.fontSize = `${size}px`;
-            localStorage.setItem('fontSize', size);
+            fontSizeValue.textContent = fontSize.value;
+            contentElement.style.fontSize = `${fontSize.value}px`;
+            localStorage.setItem('fontSize', fontSize.value);
         });
 
-        // Line height change
         lineHeight.addEventListener('input', () => {
-            const height = lineHeight.value;
-            lineHeightValue.textContent = height;
-            contentElement.style.lineHeight = height;
-            localStorage.setItem('lineHeight', height);
+            lineHeightValue.textContent = lineHeight.value;
+            contentElement.style.lineHeight = lineHeight.value;
+            localStorage.setItem('lineHeight', lineHeight.value);
         });
 
-        // Reading width change
         readingWidth.addEventListener('input', () => {
-            const width = readingWidth.value;
-            widthValue.textContent = width;
-            mainContent.style.maxWidth = `${width}px`;
-            localStorage.setItem('readingWidth', width);
+            widthValue.textContent = readingWidth.value;
+            mainContent.style.maxWidth = `${readingWidth.value}px`;
+            localStorage.setItem('readingWidth', readingWidth.value);
         });
 
-        // Text color change
         textColor.addEventListener('input', () => {
             contentElement.style.color = textColor.value;
             localStorage.setItem('textColor', textColor.value);
         });
 
-        // Reader padding change
         readerPadding.addEventListener('input', () => {
-            const padding = readerPadding.value;
-            paddingValue.textContent = padding;
-            readerContainer.style.padding = `${padding}px`;
-            localStorage.setItem('readerPadding', padding);
+            paddingValue.textContent = readerPadding.value;
+            readerContainer.style.padding = `${readerPadding.value}px`;
+            localStorage.setItem('readerPadding', readerPadding.value);
         });
 
-        // Letter spacing change
         letterSpacing.addEventListener('input', () => {
-            const spacing = letterSpacing.value;
-            letterSpacingValue.textContent = spacing;
-            contentElement.style.letterSpacing = `${spacing}px`;
-            localStorage.setItem('letterSpacing', spacing);
+            letterSpacingValue.textContent = letterSpacing.value;
+            contentElement.style.letterSpacing = `${letterSpacing.value}px`;
+            localStorage.setItem('letterSpacing', letterSpacing.value);
         });
 
-        // Theme changes
         function setTheme(theme) {
-            // Remove all theme classes
             document.body.classList.remove(
-                'dark-mode', 'sepia-mode', 'retro-mode',
-                'terminal-mode', 'punk-mode', 'modern-mode',
-                'paper-mode', 'night-owl-mode'
+                'dark-theme', 'sepia-theme', 'retro-theme',
+                'terminal-theme', 'punk-theme', 'themern-theme',
+                'paper-theme', 'night-owl-theme'
             );
-
-            // Add the selected theme class
             if (theme !== 'light') {
-                document.body.classList.add(`${theme}-mode`);
+                document.body.classList.add(`${theme}-theme`);
             }
-
             localStorage.setItem('theme', theme);
         }
 
-        lightMode.addEventListener('click', () => setTheme('light'));
-        darkMode.addEventListener('click', () => setTheme('dark'));
-        sepiaMode.addEventListener('click', () => setTheme('sepia'));
-        retroMode.addEventListener('click', () => setTheme('retro'));
-        terminalMode.addEventListener('click', () => setTheme('terminal'));
-        punkMode.addEventListener('click', () => setTheme('punk'));
-        modernMode.addEventListener('click', () => setTheme('modern'));
-        paperMode.addEventListener('click', () => setTheme('paper'));
-        nightOwlMode.addEventListener('click', () => setTheme('night-owl'));
+        document.getElementById('light-theme').addEventListener('click', () => setTheme('light'));
+        document.getElementById('dark-theme').addEventListener('click', () => setTheme('dark'));
+        document.getElementById('sepia-theme').addEventListener('click', () => setTheme('sepia'));
+        document.getElementById('retro-theme').addEventListener('click', () => setTheme('retro'));
+        document.getElementById('terminal-theme').addEventListener('click', () => setTheme('terminal'));
+        document.getElementById('punk-theme').addEventListener('click', () => setTheme('punk'));
+        document.getElementById('themern-theme').addEventListener('click', () => setTheme('themern'));
+        document.getElementById('paper-theme').addEventListener('click', () => setTheme('paper'));
+        document.getElementById('night-owl-theme').addEventListener('click', () => setTheme('night-owl'));
 
-        // Toggle reading line
         toggleReadingLine.addEventListener('click', () => {
             readingLine.classList.toggle('hidden');
             readingLine.classList.toggle('active');
-
             if (readingLine.classList.contains('active')) {
-                const linePosition = window.innerHeight / 3;
-                readingLine.style.top = `${window.scrollY + linePosition}px`;
+                readingLine.style.top = `${window.scrollY + window.innerHeight / 3}px`;
             }
-
             localStorage.setItem('readingLineActive', readingLine.classList.contains('active'));
         });
 
-        // Page animation change
         pageAnimation.addEventListener('change', () => {
             localStorage.setItem('pageAnimation', pageAnimation.value);
         });
 
-        // Format tools
         addSpacer.addEventListener('click', () => {
-            const content = contentElement.textContent;
-            contentElement.innerHTML = content.replace(/\n/g, '<br><br>');
+            contentElement.innerHTML = contentElement.textContent.replace(/\n/g, '<br><br>');
             localStorage.setItem('formattedContent', contentElement.innerHTML);
         });
 
         addIndent.addEventListener('click', () => {
-            const content = contentElement.textContent;
-            const paragraphs = content.split('\n\n');
-            const indentedContent = paragraphs.map(p => `<p style="text-indent: 2em;">${p}</p>`).join('');
-            contentElement.innerHTML = indentedContent;
+            const paragraphs = contentElement.textContent.split('\n\n');
+            contentElement.innerHTML = paragraphs.map(p => `<p style="text-indent: 2em;">${p}</p>`).join('');
             localStorage.setItem('formattedContent', contentElement.innerHTML);
         });
 
@@ -859,13 +827,16 @@
             localStorage.setItem('justify', contentElement.style.textAlign === 'justify');
         });
 
-        // Save preset
+        toggleNotebookLines.addEventListener('click', () => {
+            contentElement.classList.toggle('notebook-lines');
+            localStorage.setItem('notebookLines', contentElement.classList.contains('notebook-lines'));
+        });
+
         savePreset.addEventListener('click', () => {
             const presetName = prompt('Enter a name for this preset:');
             if (!presetName) return;
-
             const preset = {
-                theme: localStorage.getItem('theme') || 'light',
+                theme: localStorage.getItem('theme') || 'night-owl',
                 fontFamily: fontFamily.value,
                 fontSize: fontSize.value,
                 lineHeight: lineHeight.value,
@@ -874,15 +845,13 @@
                 readerPadding: readerPadding.value,
                 letterSpacing: letterSpacing.value
             };
-
             const presets = JSON.parse(localStorage.getItem('presets') || '{}');
             presets[presetName] = preset;
             localStorage.setItem('presets', JSON.stringify(presets));
-
             alert(`Preset "${presetName}" has been saved!`);
         });
 
-        // Save text as file
+        // --- Download text ---
         saveTextButton.addEventListener('click', () => {
             const title = titleElement.textContent || 'Text';
             const content = contentElement.textContent;
@@ -897,7 +866,6 @@
             URL.revokeObjectURL(url);
         });
 
-        // Clear storage
         clearStorageButton.addEventListener('click', () => {
             if (confirm('Are you sure you want to clear all saved settings?')) {
                 localStorage.clear();
@@ -905,176 +873,66 @@
             }
         });
 
-        // DOM elements
-        const noTitle = document.getElementById('no-title');
-        noTitle.addEventListener('click', () => {
-            contentElement.classList.toggle('no-title');
-            localStorage.setItem('noTitleMode', contentElement.classList.contains('no-title'));
+        document.getElementById('clear-text').addEventListener('click', () => {
+            textInput.value = '';
+            textInput.focus();
         });
 
-        // --- FIX: Unified load function ---
-        function loadText() {
-            const text = textInput.value.trim();
-            if (!text) return;
-
-            const noTitleActive = contentElement.classList.contains('no-title');
-
-            if (noTitleActive) {
-                // No title mode: treat ALL text as content
-                titleElement.textContent = '';
-                contentElement.innerHTML = text.replace(/\n/g, '<br>');
-            } else {
-                // Normal mode: first line = title, remainder = content
-                const lines = text.split('\n');
-                titleElement.textContent = lines[0];
-                contentElement.innerHTML = lines.slice(1).join('\n').replace(/\n/g, '<br>');
+        document.getElementById('paste-text').addEventListener('click', async () => {
+            try {
+                const text = await navigator.clipboard.readText();
+                textInput.value = text;
+                const btn = document.getElementById('paste-text');
+                btn.textContent = 'Pasted!';
+                setTimeout(() => { btn.textContent = 'Paste'; }, 1000);
+            } catch (err) {
+                alert('Unable to access clipboard. Please check permissions or paste manually.');
             }
-
-            contentElement.style.whiteSpace = 'pre-line';
-            readerContainer.classList.remove('hidden');
-
-            // Reading time
-            const wordCount = text.split(/\s+/).length;
-            readingTimeElement.textContent = `Reading time: ${Math.ceil(wordCount / 200)} min`;
-
-            // Save
-            localStorage.setItem('savedText', text);
-
-            // Scroll + animation
-            window.scrollTo(0, readerContainer.offsetTop);
-            applyPageAnimation();
-        }
-
-        // Replace your load event binding with this:
-        loadButton.addEventListener('click', loadText);
-        if (localStorage.getItem('noTitleMode') === 'true') {
-            contentElement.classList.add('no-title');
-        }
-
-
-        // --- FIX: No-title toggle updates immediately ---
-        noTitle.addEventListener('click', () => {
-            contentElement.classList.toggle('no-title');
-            localStorage.setItem('noTitleMode', contentElement.classList.contains('no-title'));
-            loadText(); // Reload display to reflect change instantly
         });
 
-
-        if (localStorage.getItem('noTitleMode') === 'true') {
-            contentElement.classList.add('no-title');
-        }
-
-
-        // Add CSS animations
         const styleElement = document.createElement('style');
         styleElement.textContent = `
             @keyframes fadeIn {
                 from { opacity: 0; }
                 to { opacity: 1; }
             }
-            
             @keyframes slideIn {
                 from { transform: translateY(20px); opacity: 0; }
                 to { transform: translateY(0); opacity: 1; }
             }
-            
             @keyframes fold {
                 from { transform: rotateX(90deg); transform-origin: top; opacity: 0; }
                 to { transform: rotateX(0deg); transform-origin: top; opacity: 1; }
             }
         `;
         document.head.appendChild(styleElement);
-        const clearTextButton = document.getElementById('clear-text');
 
-        clearTextButton.addEventListener('click', () => {
-            textInput.value = '';
-            // Optional: Also focus the textInput after clearing
-            textInput.focus();
-        });
-
-        // Load saved settings on page load
         window.addEventListener('DOMContentLoaded', () => {
-            // Check if sidebar state was saved
-            const sidebarState = localStorage.getItem('sidebarCollapsed');
-            if (sidebarState === 'true') {
+            if (localStorage.getItem('sidebarCollapsed') === 'true') {
                 sidebar.classList.add('collapsed');
                 sidebarToggle.classList.add('collapsed');
                 document.body.classList.add('sidebar-closed');
             }
 
-            // Load saved text
-            const savedText = localStorage.getItem('savedText');
-            if (savedText) {
-                textInput.value = savedText;
-                loadButton.click();
+            const savedTheme = localStorage.getItem('theme') || 'night-owl';
+            setTheme(savedTheme);
+
+            if (localStorage.getItem('noTitletheme') === 'true') {
+                setNoTitle(true);
             }
 
-            // Load theme
-            const theme = localStorage.getItem('theme');
-            if (theme) {
-                setTheme(theme);
-            }
+         
+            const savedFontSize = localStorage.getItem('fontSize') || '24';
+            fontSize.value = savedFontSize;
+            fontSizeValue.textContent = savedFontSize;
+            contentElement.style.fontSize = `${savedFontSize}px`;
 
-            // Load text formatting
-            const formattedContent = localStorage.getItem('formattedContent');
-            if (formattedContent) {
-                contentElement.innerHTML = formattedContent;
-            }
-
-            // Load hyphenation
-            if (localStorage.getItem('hyphenate') === 'true') {
-                contentElement.style.hyphens = 'auto';
-                contentElement.style.webkitHyphens = 'auto';
-                contentElement.style.msHyphens = 'auto';
-            }
-
-            // Load justification
-            if (localStorage.getItem('justify') === 'true') {
-                contentElement.style.textAlign = 'justify';
-            }
-            const toggleNotebookLines = document.getElementById('toggle-notebook-lines');
-
-            // Add event listener
-            toggleNotebookLines.addEventListener('click', () => {
-                contentElement.classList.toggle('notebook-lines');
-                localStorage.setItem('notebookLines', contentElement.classList.contains('notebook-lines'));
-            });
-
-            const pasteTextButton = document.getElementById('paste-text');
-
-            pasteTextButton.addEventListener('click', async () => {
-                try {
-                    const text = await navigator.clipboard.readText();
-                    textInput.value = text;
-                    // Optional: Give visual feedback that paste was successful
-                    pasteTextButton.textContent = "Pasted!";
-                    setTimeout(() => {
-                        pasteTextButton.textContent = "Paste";
-                    }, 1000);
-                } catch (err) {
-                    // Handle clipboard permission errors
-                    alert('Unable to access clipboard. Please check permissions or paste manually.');
-                    console.error('Failed to read clipboard:', err);
-                }
-            });
-
-            // Add this to your window.addEventListener('DOMContentLoaded', () => {...}) function
-            if (localStorage.getItem('notebookLines') === 'true') {
-                contentElement.classList.add('notebook-lines');
-            }
-            // Load font settings
+         
             const savedFontFamily = localStorage.getItem('fontFamily');
             if (savedFontFamily) {
                 fontFamily.value = savedFontFamily;
                 contentElement.style.fontFamily = savedFontFamily;
                 titleElement.style.fontFamily = savedFontFamily;
-            }
-
-            const savedFontSize = localStorage.getItem('fontSize');
-            if (savedFontSize) {
-                fontSize.value = savedFontSize;
-                fontSizeValue.textContent = savedFontSize;
-                contentElement.style.fontSize = `${savedFontSize}px`;
             }
 
             const savedLineHeight = localStorage.getItem('lineHeight');
@@ -1111,21 +969,44 @@
                 contentElement.style.letterSpacing = `${savedLetterSpacing}px`;
             }
 
-            // Load reading line state
+            if (localStorage.getItem('notebookLines') === 'true') {
+                contentElement.classList.add('notebook-lines');
+            }
+
+      
+            if (localStorage.getItem('hyphenate') === 'true') {
+                contentElement.style.hyphens = 'auto';
+                contentElement.style.webkitHyphens = 'auto';
+                contentElement.style.msHyphens = 'auto';
+            }
+
+   
+            if (localStorage.getItem('justify') === 'true') {
+                contentElement.style.textAlign = 'justify';
+            }
+
+ 
             if (localStorage.getItem('readingLineActive') === 'true') {
                 readingLine.classList.remove('hidden');
                 readingLine.classList.add('active');
-                const linePosition = window.innerHeight / 3;
-                readingLine.style.top = `${window.scrollY + linePosition}px`;
+                readingLine.style.top = `${window.scrollY + window.innerHeight / 3}px`;
             }
 
-            // Load page animation
+            
             const savedAnimation = localStorage.getItem('pageAnimation');
             if (savedAnimation) {
                 pageAnimation.value = savedAnimation;
             }
 
-
+            const formattedContent = localStorage.getItem('formattedContent');
+            const savedText = localStorage.getItem('savedText');
+            if (savedText) {
+                textInput.value = savedText;
+                loadText();
+                if (formattedContent) {
+                    contentElement.innerHTML = formattedContent;
+                }
+            }
         });
     </script>
 </body>
