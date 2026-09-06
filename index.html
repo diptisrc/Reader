@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Reader</title>
+    <title>Text to Image</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Lato:wght@400;700&family=Lora:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,300;0,400;1,300&family=Nunito:wght@400;600&family=Open+Sans:wght@400;600&family=Roboto:wght@400;500&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
@@ -86,16 +86,6 @@
             left: 0;
         }
 
-        .notebook-lines {
-            background-image: linear-gradient(transparent 0px,
-                    transparent 19px,
-                    var(--separator) 19px,
-                    var(--separator) 20px);
-            background-size: 100% 20px;
-            line-height: 20px;
-            padding-top: 20px;
-        }
-
         .sidebar-header {
             margin-bottom: 20px;
             padding-bottom: 10px;
@@ -121,6 +111,7 @@
         }
 
         #title {
+            display: none;
             font-size: 28px;
             margin-bottom: 30px;
             text-align: center;
@@ -128,15 +119,23 @@
             color: var(--title-color);
         }
 
-     
-        #reader-container.no-title #title {
-            display: none;
+        #reader-container.show-title #title {
+            display: block;
         }
 
         #content {
             white-space: pre-wrap;
             padding: 10px 0;
             line-height: inherit;
+        }
+
+        .copy-image-row {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .copy-image-btn {
+            padding: 12px 24px;
         }
 
         .control-section {
@@ -150,7 +149,8 @@
 
         #load-text,
         #clear-text,
-        #paste-text {
+        #paste-text,
+        #filter-emojis {
             display: inline-block;
             margin-right: 10px;
             margin-bottom: 10px;
@@ -234,18 +234,6 @@
             height: 1px;
             background-color: var(--hr-color);
             margin: 15px 0;
-        }
-
-        #format-tools {
-            margin-top: 15px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-        }
-
-        #format-tools button {
-            padding: 5px 10px;
-            font-size: 0.9em;
         }
 
         body.dark-theme {
@@ -403,16 +391,6 @@
             --hr-color: #1d3b53;
         }
 
-        .line-indicator {
-            position: fixed;
-            height: 2px;
-            background-color: var(--btn-bg);
-            width: 100%;
-            left: 0;
-            opacity: 0.7;
-            z-index: 5;
-        }
-
         @media (max-width: 768px) {
             body {
                 margin-left: 0;
@@ -438,33 +416,25 @@
                 padding: 20px 15px;
             }
         }
-
-        #load-text,
-        #clear-text,
-        #paste-text,
-        #filter-emojis {
-            display: inline-block;
-            margin-right: 10px;
-            margin-bottom: 10px;
-        }
     </style>
 </head>
 
 <body>
     <div class="sidebar">
         <div class="sidebar-header">
-            <h2>Text Reader/Pretty text</h2>
+            <h2>Text to Image</h2>
         </div>
 
         <div class="control-section">
             <h3>Text Input</h3>
             <div class="control-group">
-                <label for="text-input">Paste your text (first line = title):</label>
+                <label for="text-input">Your text:</label>
                 <textarea id="text-input" placeholder="Paste your text here..."></textarea>
                 <button id="load-text">Load Text</button>
+                <button id="paste-text">Paste</button>
                 <button id="clear-text">Clear Text</button>
                 <button id="filter-emojis">Filter Emojis</button>
-                <button id="no-title">No Title</button>
+                <button id="toggle-title">Title</button>
             </div>
         </div>
 
@@ -512,11 +482,6 @@
                         <option value="'Bookman Old Style', serif">Bookman</option>
                 </select>
             </div>
-            <div class="control-group">
-                <label>Display Style:</label>
-                <button id="toggle-notebook-lines">Toggle Notebook Lines</button>
-            
-            </div>
 
             <div class="control-group">
                 <label for="font-size">Font Size: <span id="font-size-value">24</span>px</label>
@@ -539,7 +504,7 @@
         <div class="control-section">
             <h3>Layout Options</h3>
             <div class="control-group">
-                <label for="reading-width">Reading Width: <span id="width-value">800</span>px</label>
+                <label for="reading-width">Image Width: <span id="width-value">800</span>px</label>
                 <input type="range" id="reading-width" min="400" max="1500" step="50" value="800">
             </div>
 
@@ -551,37 +516,6 @@
             <div class="control-group">
                 <label for="letter-spacing">Letter Spacing: <span id="letter-spacing-value">0</span>px</label>
                 <input type="range" id="letter-spacing" min="-2" max="10" step="0.5" value="0">
-            </div>
-        </div>
-
-        <hr>
-
-        <div class="control-section">
-            <h3>Features</h3>
-
-            <div class="control-group">
-                <label>Reading Guide:</label>
-                <button id="toggle-reading-line">Toggle Reading Line</button>
-            </div>
-
-            <div class="control-group">
-                <label for="page-animation">Page Turn Animation:</label>
-                <select id="page-animation">
-                    <option value="none">None</option>
-                    <option value="fade">Fade</option>
-                    <option value="slide">Slide</option>
-                    <option value="fold">Fold</option>
-                </select>
-            </div>
-
-            <div class="control-group">
-                <label>Text Format Tools:</label>
-                <div id="format-tools">
-                    <button id="add-spacer">Add Line Spacers</button>
-                    <button id="add-indent">Add Indentation</button>
-                    <button id="hyphenate">Auto-Hyphenate</button>
-                    <button id="justify">Justify Text</button>
-                </div>
             </div>
         </div>
 
@@ -603,10 +537,11 @@
         <div id="reader-container" class="hidden">
             <div id="title"></div>
             <div id="content"></div>
+            <div class="copy-image-row">
+                <button id="copy-image" class="copy-image-btn">Copy to Image</button>
+            </div>
         </div>
     </div>
-
-    <div id="reading-line" class="line-indicator hidden"></div>
 
     <script>
         const sidebar = document.querySelector('.sidebar');
@@ -631,33 +566,31 @@
         const letterSpacing = document.getElementById('letter-spacing');
         const letterSpacingValue = document.getElementById('letter-spacing-value');
 
-        const toggleReadingLine = document.getElementById('toggle-reading-line');
-        const readingLine = document.getElementById('reading-line');
-        const pageAnimation = document.getElementById('page-animation');
-        const addSpacer = document.getElementById('add-spacer');
-        const addIndent = document.getElementById('add-indent');
-        const hyphenateText = document.getElementById('hyphenate');
-        const justifyText = document.getElementById('justify');
         const savePreset = document.getElementById('save-preset');
         const saveTextButton = document.getElementById('save-text');
         const clearStorageButton = document.getElementById('clear-storage');
-        const noTitleBtn = document.getElementById('no-title');
-        const toggleNotebookLines = document.getElementById('toggle-notebook-lines');
+        const titleToggleBtn = document.getElementById('toggle-title');
+        const copyImageBtn = document.getElementById('copy-image');
 
-        function setNoTitle(active) {
+        // Raw text kept separately from the rendered DOM so the canvas export
+        // can wrap it independently of how the browser happens to render it.
+        let currentTitleText = '';
+        let currentContentText = '';
+
+        function setShowTitle(active) {
             if (active) {
-                readerContainer.classList.add('no-title');
-                noTitleBtn.classList.add('active');
+                readerContainer.classList.add('show-title');
+                titleToggleBtn.classList.add('active');
             } else {
-                readerContainer.classList.remove('no-title');
-                noTitleBtn.classList.remove('active');
+                readerContainer.classList.remove('show-title');
+                titleToggleBtn.classList.remove('active');
             }
-            localStorage.setItem('noTitletheme', active);
+            localStorage.setItem('showTitle', active);
         }
 
-        noTitleBtn.addEventListener('click', () => {
-            const isActive = readerContainer.classList.contains('no-title');
-            setNoTitle(!isActive);
+        titleToggleBtn.addEventListener('click', () => {
+            const isActive = readerContainer.classList.contains('show-title');
+            setShowTitle(!isActive);
             if (!readerContainer.classList.contains('hidden')) {
                 loadText();
             }
@@ -667,23 +600,25 @@
             const text = textInput.value.trim();
             if (!text) return;
 
-            const noTitleActive = readerContainer.classList.contains('no-title');
+            const showTitleActive = readerContainer.classList.contains('show-title');
 
-            if (noTitleActive) {
-                titleElement.textContent = '';
-                contentElement.innerHTML = text.replace(/\n/g, '<br>');
-            } else {
+            if (showTitleActive) {
                 const lines = text.split('\n');
-                titleElement.textContent = lines[0];
-                contentElement.innerHTML = lines.slice(1).join('\n').replace(/\n/g, '<br>');
+                currentTitleText = lines[0];
+                currentContentText = lines.slice(1).join('\n').trim();
+            } else {
+                currentTitleText = '';
+                currentContentText = text;
             }
+
+            titleElement.textContent = currentTitleText;
+            contentElement.innerHTML = currentContentText.replace(/\n/g, '<br>');
 
             contentElement.style.whiteSpace = 'pre-line';
             readerContainer.classList.remove('hidden');
 
             localStorage.setItem('savedText', text);
             window.scrollTo(0, readerContainer.offsetTop);
-            applyPageAnimation();
         }
 
         loadButton.addEventListener('click', loadText);
@@ -695,29 +630,29 @@
             localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
         });
 
-        function applyPageAnimation() {
-            const animation = pageAnimation.value;
-            switch (animation) {
-                case 'fade':
-                    readerContainer.style.animation = 'fadeIn 1s ease-in-out';
-                    break;
-                case 'slide':
-                    readerContainer.style.animation = 'slideIn 0.5s ease-in-out';
-                    break;
-                case 'fold':
-                    readerContainer.style.animation = 'fold 0.8s ease-in-out';
-                    break;
-                default:
-                    readerContainer.style.animation = 'none';
-            }
-        }
-
         document.getElementById('filter-emojis').addEventListener('click', () => {
             const emojiRegex = /[\u{1F000}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F1E6}-\u{1F1FF}\u{1F300}-\u{1F5FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}]/gu;
             const btn = document.getElementById('filter-emojis');
             textInput.value = textInput.value.replace(emojiRegex, '');
             btn.textContent = 'Emojis Removed!';
             setTimeout(() => { btn.textContent = 'Filter Emojis'; }, 1000);
+        });
+
+        document.getElementById('clear-text').addEventListener('click', () => {
+            textInput.value = '';
+            textInput.focus();
+        });
+
+        document.getElementById('paste-text').addEventListener('click', async () => {
+            try {
+                const text = await navigator.clipboard.readText();
+                textInput.value = text;
+                const btn = document.getElementById('paste-text');
+                btn.textContent = 'Pasted!';
+                setTimeout(() => { btn.textContent = 'Paste'; }, 1000);
+            } catch (err) {
+                alert('Unable to access clipboard. Please check permissions or paste manually.');
+            }
         });
 
         fontFamily.addEventListener('change', () => {
@@ -783,47 +718,6 @@
         document.getElementById('paper-theme').addEventListener('click', () => setTheme('paper'));
         document.getElementById('night-owl-theme').addEventListener('click', () => setTheme('night-owl'));
 
-        toggleReadingLine.addEventListener('click', () => {
-            readingLine.classList.toggle('hidden');
-            readingLine.classList.toggle('active');
-            if (readingLine.classList.contains('active')) {
-                readingLine.style.top = `${window.scrollY + window.innerHeight / 3}px`;
-            }
-            localStorage.setItem('readingLineActive', readingLine.classList.contains('active'));
-        });
-
-        pageAnimation.addEventListener('change', () => {
-            localStorage.setItem('pageAnimation', pageAnimation.value);
-        });
-
-        addSpacer.addEventListener('click', () => {
-            contentElement.innerHTML = contentElement.textContent.replace(/\n/g, '<br><br>');
-            localStorage.setItem('formattedContent', contentElement.innerHTML);
-        });
-
-        addIndent.addEventListener('click', () => {
-            const paragraphs = contentElement.textContent.split('\n\n');
-            contentElement.innerHTML = paragraphs.map(p => `<p style="text-indent: 2em;">${p}</p>`).join('');
-            localStorage.setItem('formattedContent', contentElement.innerHTML);
-        });
-
-        hyphenateText.addEventListener('click', () => {
-            contentElement.style.hyphens = 'auto';
-            contentElement.style.webkitHyphens = 'auto';
-            contentElement.style.msHyphens = 'auto';
-            localStorage.setItem('hyphenate', 'true');
-        });
-
-        justifyText.addEventListener('click', () => {
-            contentElement.style.textAlign = contentElement.style.textAlign === 'justify' ? 'left' : 'justify';
-            localStorage.setItem('justify', contentElement.style.textAlign === 'justify');
-        });
-
-        toggleNotebookLines.addEventListener('click', () => {
-            contentElement.classList.toggle('notebook-lines');
-            localStorage.setItem('notebookLines', contentElement.classList.contains('notebook-lines'));
-        });
-
         savePreset.addEventListener('click', () => {
             const presetName = prompt('Enter a name for this preset:');
             if (!presetName) return;
@@ -845,13 +739,13 @@
 
         // --- Download text ---
         saveTextButton.addEventListener('click', () => {
-            const title = titleElement.textContent || 'Text';
-            const content = contentElement.textContent;
-            const blob = new Blob([title + '\n\n' + content], { type: 'text/plain' });
+            const title = currentTitleText || 'Text';
+            const content = currentContentText;
+            const blob = new Blob([title ? title + '\n\n' + content : content], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.txt`;
+            a.download = `${title.replace(/[^a-z0-9]/gi, '-').toLowerCase() || 'text'}.txt`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -865,39 +759,136 @@
             }
         });
 
-        document.getElementById('clear-text').addEventListener('click', () => {
-            textInput.value = '';
-            textInput.focus();
-        });
+        // --- Copy rendered text box to image ---
 
-        document.getElementById('paste-text').addEventListener('click', async () => {
-            try {
-                const text = await navigator.clipboard.readText();
-                textInput.value = text;
-                const btn = document.getElementById('paste-text');
-                btn.textContent = 'Pasted!';
-                setTimeout(() => { btn.textContent = 'Paste'; }, 1000);
-            } catch (err) {
-                alert('Unable to access clipboard. Please check permissions or paste manually.');
-            }
-        });
+        function wrapLine(ctx, text, maxWidth) {
+            if (text === '') return [''];
+            const words = text.split(' ');
+            const lines = [];
+            let current = '';
+            words.forEach(word => {
+                const test = current ? current + ' ' + word : word;
+                if (ctx.measureText(test).width > maxWidth && current) {
+                    lines.push(current);
+                    current = word;
+                } else {
+                    current = test;
+                }
+            });
+            if (current) lines.push(current);
+            return lines;
+        }
 
-        const styleElement = document.createElement('style');
-        styleElement.textContent = `
-            @keyframes fadeIn {
-                from { opacity: 0; }
-                to { opacity: 1; }
+        function renderTextCanvas() {
+            const family = fontFamily.value;
+            const size = parseInt(fontSize.value, 10);
+            const lh = parseFloat(lineHeight.value);
+            const spacing = parseFloat(letterSpacing.value);
+            const pad = parseInt(readerPadding.value, 10);
+            const textWidth = parseInt(readingWidth.value, 10);
+            const color = textColor.value;
+            const bodyStyle = getComputedStyle(document.body);
+            const bg = bodyStyle.getPropertyValue('--reader-bg').trim() || '#ffffff';
+            const titleColor = bodyStyle.getPropertyValue('--title-color').trim() || color;
+
+            const scale = 2; // render at 2x for sharper images
+            const measure = document.createElement('canvas').getContext('2d');
+            if ('letterSpacing' in measure) measure.letterSpacing = `${spacing}px`;
+
+            const showTitleActive = readerContainer.classList.contains('show-title');
+            const titleSize = size + 6;
+            const titleLineHeight = titleSize * 1.3;
+
+            let titleLines = [];
+            if (showTitleActive && currentTitleText) {
+                measure.font = `bold ${titleSize}px ${family}`;
+                titleLines = wrapLine(measure, currentTitleText, textWidth);
             }
-            @keyframes slideIn {
-                from { transform: translateY(20px); opacity: 0; }
-                to { transform: translateY(0); opacity: 1; }
+
+            measure.font = `${size}px ${family}`;
+            let contentLines = [];
+            currentContentText.split('\n').forEach(line => {
+                contentLines = contentLines.concat(wrapLine(measure, line, textWidth));
+            });
+
+            const lineHeightPx = size * lh;
+            const titleBlockHeight = titleLines.length ? titleLines.length * titleLineHeight + 20 : 0;
+            const contentBlockHeight = contentLines.length * lineHeightPx;
+
+            const totalWidth = textWidth + pad * 2;
+            const totalHeight = Math.ceil(pad * 2 + titleBlockHeight + contentBlockHeight);
+
+            const canvas = document.createElement('canvas');
+            canvas.width = totalWidth * scale;
+            canvas.height = totalHeight * scale;
+            const ctx = canvas.getContext('2d');
+            ctx.scale(scale, scale);
+            if ('letterSpacing' in ctx) ctx.letterSpacing = `${spacing}px`;
+
+            ctx.fillStyle = bg;
+            ctx.fillRect(0, 0, totalWidth, totalHeight);
+
+            let y = pad;
+
+            if (titleLines.length) {
+                ctx.font = `bold ${titleSize}px ${family}`;
+                ctx.fillStyle = titleColor;
+                ctx.textAlign = 'center';
+                titleLines.forEach(line => {
+                    y += titleLineHeight;
+                    ctx.fillText(line, totalWidth / 2, y - titleLineHeight * 0.25);
+                });
+                y += 20;
             }
-            @keyframes fold {
-                from { transform: rotateX(90deg); transform-origin: top; opacity: 0; }
-                to { transform: rotateX(0deg); transform-origin: top; opacity: 1; }
+
+            ctx.font = `${size}px ${family}`;
+            ctx.fillStyle = color;
+            ctx.textAlign = 'left';
+            contentLines.forEach(line => {
+                y += lineHeightPx;
+                ctx.fillText(line, pad, y - lineHeightPx + size);
+            });
+
+            return canvas;
+        }
+
+        function flashButton(btn, text) {
+            const original = btn.textContent;
+            btn.textContent = text;
+            setTimeout(() => { btn.textContent = original; }, 1500);
+        }
+
+        copyImageBtn.addEventListener('click', () => {
+            if (readerContainer.classList.contains('hidden') || !currentContentText) {
+                alert('Load some text first.');
+                return;
             }
-        `;
-        document.head.appendChild(styleElement);
+
+            const canvas = renderTextCanvas();
+            canvas.toBlob(async (blob) => {
+                if (!blob) return;
+
+                if (navigator.clipboard && window.ClipboardItem) {
+                    try {
+                        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                        flashButton(copyImageBtn, 'Copied!');
+                        return;
+                    } catch (err) {
+                        // fall through to download
+                    }
+                }
+
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${(currentTitleText || 'text').replace(/[^a-z0-9]/gi, '-').toLowerCase()}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                flashButton(copyImageBtn, 'Downloaded (copy unsupported)');
+            }, 'image/png');
+        });
 
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('sidebarCollapsed') === 'true') {
@@ -909,17 +900,15 @@
             const savedTheme = localStorage.getItem('theme') || 'night-owl';
             setTheme(savedTheme);
 
-            if (localStorage.getItem('noTitletheme') === 'true') {
-                setNoTitle(true);
+            if (localStorage.getItem('showTitle') === 'true') {
+                setShowTitle(true);
             }
 
-         
             const savedFontSize = localStorage.getItem('fontSize') || '24';
             fontSize.value = savedFontSize;
             fontSizeValue.textContent = savedFontSize;
             contentElement.style.fontSize = `${savedFontSize}px`;
 
-         
             const savedFontFamily = localStorage.getItem('fontFamily');
             if (savedFontFamily) {
                 fontFamily.value = savedFontFamily;
@@ -961,43 +950,10 @@
                 contentElement.style.letterSpacing = `${savedLetterSpacing}px`;
             }
 
-            if (localStorage.getItem('notebookLines') === 'true') {
-                contentElement.classList.add('notebook-lines');
-            }
-
-      
-            if (localStorage.getItem('hyphenate') === 'true') {
-                contentElement.style.hyphens = 'auto';
-                contentElement.style.webkitHyphens = 'auto';
-                contentElement.style.msHyphens = 'auto';
-            }
-
-   
-            if (localStorage.getItem('justify') === 'true') {
-                contentElement.style.textAlign = 'justify';
-            }
-
- 
-            if (localStorage.getItem('readingLineActive') === 'true') {
-                readingLine.classList.remove('hidden');
-                readingLine.classList.add('active');
-                readingLine.style.top = `${window.scrollY + window.innerHeight / 3}px`;
-            }
-
-            
-            const savedAnimation = localStorage.getItem('pageAnimation');
-            if (savedAnimation) {
-                pageAnimation.value = savedAnimation;
-            }
-
-            const formattedContent = localStorage.getItem('formattedContent');
             const savedText = localStorage.getItem('savedText');
             if (savedText) {
                 textInput.value = savedText;
                 loadText();
-                if (formattedContent) {
-                    contentElement.innerHTML = formattedContent;
-                }
             }
         });
     </script>
