@@ -35,7 +35,7 @@
         }
 
         body {
-            font-family: 'Georgia', serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
             line-height: 1.6;
             background-color: var(--bg-color);
             color: var(--text-color);
@@ -123,6 +123,11 @@
             display: block;
         }
 
+        #title,
+        #content {
+            font-family: Georgia, 'Times New Roman', serif;
+        }
+
         #content {
             white-space: pre-wrap;
             padding: 10px 0;
@@ -131,11 +136,22 @@
 
         .copy-image-row {
             text-align: center;
-            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--hr-color);
         }
 
         .copy-image-btn {
-            padding: 12px 24px;
+            padding: 14px 28px;
+            font-size: 1.05em;
+            font-weight: 600;
+        }
+
+        .copy-status {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.9em;
+            color: var(--control-text);
+            min-height: 1.2em;
         }
 
         .control-section {
@@ -163,8 +179,14 @@
         label {
             display: block;
             margin-bottom: 8px;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 0.95em;
             color: var(--control-text);
+        }
+
+        .control-section h3 {
+            font-size: 1.05em;
+            font-weight: 700;
         }
 
         select,
@@ -484,8 +506,8 @@
             </div>
 
             <div class="control-group">
-                <label for="font-size">Font Size: <span id="font-size-value">24</span>px</label>
-                <input type="range" id="font-size" min="12" max="32" value="24">
+                <label for="font-size">Font Size: <span id="font-size-value">26</span>px</label>
+                <input type="range" id="font-size" min="16" max="40" value="26">
             </div>
 
             <div class="control-group">
@@ -537,9 +559,10 @@
         <div id="reader-container" class="hidden">
             <div id="title"></div>
             <div id="content"></div>
-            <div class="copy-image-row">
-                <button id="copy-image" class="copy-image-btn">Copy to Image</button>
-            </div>
+        </div>
+        <div class="copy-image-row">
+            <button id="copy-image" class="copy-image-btn">Copy to Image</button>
+            <span id="copy-status" class="copy-status"></span>
         </div>
     </div>
 
@@ -766,7 +789,27 @@
             const words = text.split(' ');
             const lines = [];
             let current = '';
+
+            function breakLongWord(word) {
+                let piece = '';
+                for (const ch of word) {
+                    const test = piece + ch;
+                    if (ctx.measureText(test).width > maxWidth && piece) {
+                        lines.push(piece);
+                        piece = ch;
+                    } else {
+                        piece = test;
+                    }
+                }
+                return piece;
+            }
+
             words.forEach(word => {
+                if (ctx.measureText(word).width > maxWidth) {
+                    if (current) { lines.push(current); current = ''; }
+                    current = breakLongWord(word);
+                    return;
+                }
                 const test = current ? current + ' ' + word : word;
                 if (ctx.measureText(test).width > maxWidth && current) {
                     lines.push(current);
@@ -786,10 +829,14 @@
             const spacing = parseFloat(letterSpacing.value);
             const pad = parseInt(readerPadding.value, 10);
             const textWidth = parseInt(readingWidth.value, 10);
-            const color = textColor.value;
+            // Derive colors from what's actually rendered on screen, not the
+            // color picker's static default. Otherwise a theme like Night Owl
+            // (light text on a dark background) exports as invisible dark
+            // text on a dark background, because the picker still says #333.
+            const color = getComputedStyle(contentElement).color;
             const bodyStyle = getComputedStyle(document.body);
             const bg = bodyStyle.getPropertyValue('--reader-bg').trim() || '#ffffff';
-            const titleColor = bodyStyle.getPropertyValue('--title-color').trim() || color;
+            const titleColor = getComputedStyle(titleElement).color || color;
 
             const scale = 2; // render at 2x for sharper images
             const measure = document.createElement('canvas').getContext('2d');
@@ -825,8 +872,16 @@
             ctx.scale(scale, scale);
             if ('letterSpacing' in ctx) ctx.letterSpacing = `${spacing}px`;
 
+            const radius = 8;
             ctx.fillStyle = bg;
-            ctx.fillRect(0, 0, totalWidth, totalHeight);
+            ctx.beginPath();
+            ctx.moveTo(radius, 0);
+            ctx.arcTo(totalWidth, 0, totalWidth, totalHeight, radius);
+            ctx.arcTo(totalWidth, totalHeight, 0, totalHeight, radius);
+            ctx.arcTo(0, totalHeight, 0, 0, radius);
+            ctx.arcTo(0, 0, totalWidth, 0, radius);
+            ctx.closePath();
+            ctx.fill();
 
             let y = pad;
 
@@ -852,42 +907,77 @@
             return canvas;
         }
 
-        function flashButton(btn, text) {
-            const original = btn.textContent;
-            btn.textContent = text;
-            setTimeout(() => { btn.textContent = original; }, 1500);
+        const copyStatus = document.getElementById('copy-status');
+
+        function setCopyStatus(text) {
+            copyStatus.textContent = text;
+        }
+
+        function canvasToBlob(canvas) {
+            return new Promise((resolve, reject) => {
+                canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('toBlob returned null')), 'image/png');
+            });
+        }
+
+        function downloadBlob(blob) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${(currentTitleText || 'text').replace(/[^a-z0-9]/gi, '-').toLowerCase()}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        async function fallbackToDownload(blobPromise, reasonText) {
+            try {
+                const blob = await blobPromise;
+                downloadBlob(blob);
+                setCopyStatus(`${reasonText} — downloaded the PNG instead.`);
+            } catch (e) {
+                setCopyStatus('Could not generate the image: ' + e.message);
+            }
         }
 
         copyImageBtn.addEventListener('click', () => {
             if (readerContainer.classList.contains('hidden') || !currentContentText) {
-                alert('Load some text first.');
+                setCopyStatus('Load some text first.');
                 return;
             }
 
+            setCopyStatus('');
             const canvas = renderTextCanvas();
-            canvas.toBlob(async (blob) => {
-                if (!blob) return;
+            const blobPromise = canvasToBlob(canvas);
 
-                if (navigator.clipboard && window.ClipboardItem) {
-                    try {
-                        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-                        flashButton(copyImageBtn, 'Copied!');
-                        return;
-                    } catch (err) {
-                        // fall through to download
-                    }
-                }
+            if (!window.isSecureContext) {
+                // Clipboard image writes require a secure context (https or
+                // localhost). Opening this file directly (file://) or over
+                // plain http won't have clipboard access — go straight to download.
+                fallbackToDownload(blobPromise, 'Clipboard access needs https or localhost');
+                return;
+            }
 
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `${(currentTitleText || 'text').replace(/[^a-z0-9]/gi, '-').toLowerCase()}.png`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                flashButton(copyImageBtn, 'Downloaded (copy unsupported)');
-            }, 'image/png');
+            if (!navigator.clipboard || !window.ClipboardItem) {
+                fallbackToDownload(blobPromise, 'Clipboard image copy not supported in this browser');
+                return;
+            }
+
+            try {
+                // Pass the promise straight into ClipboardItem, synchronously,
+                // while still inside the click handler. Waiting on the blob
+                // first (via async/await) loses the "user gesture" context
+                // some browsers require for clipboard writes.
+                navigator.clipboard.write([new ClipboardItem({ 'image/png': blobPromise })])
+                    .then(() => setCopyStatus('Copied to clipboard.'))
+                    .catch((err) => {
+                        console.error('Clipboard write failed:', err);
+                        fallbackToDownload(blobPromise, 'Clipboard write was blocked');
+                    });
+            } catch (err) {
+                console.error('Clipboard write threw:', err);
+                fallbackToDownload(blobPromise, 'Clipboard write was blocked');
+            }
         });
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -904,7 +994,7 @@
                 setShowTitle(true);
             }
 
-            const savedFontSize = localStorage.getItem('fontSize') || '24';
+            const savedFontSize = localStorage.getItem('fontSize') || '26';
             fontSize.value = savedFontSize;
             fontSizeValue.textContent = savedFontSize;
             contentElement.style.fontSize = `${savedFontSize}px`;
